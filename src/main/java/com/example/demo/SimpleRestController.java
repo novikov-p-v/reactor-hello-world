@@ -13,8 +13,6 @@ public class SimpleRestController {
 
     @Autowired
     private TemperatureSensor temperatureSensor;
-    @Autowired
-    private MongoDbRepository mongoDbRepository;
 
     @GetMapping(value = "/test", produces = "text/event-stream")
     Flux<Temperature> get() {
