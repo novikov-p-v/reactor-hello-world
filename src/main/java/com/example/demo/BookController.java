@@ -23,6 +23,7 @@ public class BookController {
 
     @GetMapping(value = "/getBooksReactive", produces = "text/event-stream")
     @ResponseBody Flux<Book> getBooksReactive() {
+        System.out.println("BOOKS REACTIVE");
         return mongoDbReactiveRepository.findAll();
     }
 }

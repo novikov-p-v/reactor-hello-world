@@ -1,18 +1,47 @@
 package com.example.demo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.concurrent.Flow;
+import java.util.concurrent.CountDownLatch;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class DemoApplicationTests {
 
 	@Autowired
 	private TemperatureSensor temperatureSensor;
+
+	@Autowired
+	private WebTestClient webTestClient;
+
+	private CountDownLatch countDownLatch;
+
+	@BeforeEach
+	void init() {
+		countDownLatch = new CountDownLatch(1);
+	}
+
+
+	@Test
+	void testTemperature() throws InterruptedException {
+		var r = webTestClient
+				.get()
+				.uri("/getBooksReactive")
+				.exchange()
+				.expectStatus()
+				.isOk()
+				.returnResult(Book.class);
+		var flux = r.getResponseBody();
+		flux.subscribe(System.out::println, null, () -> {
+			countDownLatch.countDown();
+		});
+		countDownLatch.await();
+	}
 
 	@Test
 	void contextLoads() throws InterruptedException {
