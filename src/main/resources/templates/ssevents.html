@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ssevent</title>
+</head>
+<body>
+    <script>
+      window.addEventListener('load', function(e){
+          let eventSource = new EventSource("/test");
+          eventSource.onmessage = function(event) {
+              console.log("Новое сообщение", event.data);
+              console.log(eventSource.readyState)
+              // этот код выведет в консоль 3 сообщения, из потока данных выше
+          };
+          eventSource.addEventListener('bye', function(e) {
+              log("Событие: bye, данные: " + e.data);
+          });
+      });
+    </script>
+</body>
+</html>

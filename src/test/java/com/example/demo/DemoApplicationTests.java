@@ -37,9 +37,7 @@ class DemoApplicationTests {
 				.isOk()
 				.returnResult(Book.class);
 		var flux = r.getResponseBody();
-		flux.subscribe(System.out::println, null, () -> {
-			countDownLatch.countDown();
-		});
+		flux.subscribe(System.out::println, null, () -> countDownLatch.countDown());
 		countDownLatch.await();
 	}
 
@@ -69,12 +67,11 @@ class DemoApplicationTests {
 
 			@Override
 			public void onComplete() {
-
+				countDownLatch.countDown();
 			}
 		};
 		stream.subscribe(subscriber);
-		System.out.println("waiting");
-		Thread.sleep(20000);
+		stream.blockLast();
 	}
 
 }

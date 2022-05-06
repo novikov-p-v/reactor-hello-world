@@ -34,4 +34,9 @@ public class ThymeleafController {
 
         return "welcome"; //view
     }
+
+    @GetMapping("ssevents")
+    public String ssevent(Model model) {
+        return "ssevents"; //view
+    }
 }
