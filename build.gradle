@@ -21,8 +21,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.6.7'
 	implementation 'io.reactivex.rxjava3:rxjava:3.1.4'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.7'
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+	runtimeOnly 'io.r2dbc:r2dbc-postgresql'
+	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive:2.6.7'
 	implementation 'p6spy:p6spy:3.9.1'
+	runtimeOnly "javax.persistence:javax.persistence-api:2.2"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.7'
 	testImplementation 'io.projectreactor:reactor-test:3.4.17'
 }

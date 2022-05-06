@@ -5,12 +5,18 @@ import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 import java.util.concurrent.CountDownLatch;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
 class DemoApplicationTests {
 
 	@Autowired
@@ -18,13 +24,6 @@ class DemoApplicationTests {
 
 	@Autowired
 	private WebTestClient webTestClient;
-
-	private CountDownLatch countDownLatch;
-
-	@BeforeEach
-	void init() {
-		countDownLatch = new CountDownLatch(1);
-	}
 
 
 	@Test
@@ -37,41 +36,22 @@ class DemoApplicationTests {
 				.isOk()
 				.returnResult(Book.class);
 		var flux = r.getResponseBody();
-		flux.subscribe(System.out::println, null, () -> countDownLatch.countDown());
-		countDownLatch.await();
+		StepVerifier.create(flux.log())
+				.assertNext(book -> assertNotNull(book.getId()))
+				.expectNextCount(10)
+				.expectComplete()
+				.verify();
 	}
 
 	@Test
 	void contextLoads() throws InterruptedException {
 		var stream = temperatureSensor.temperatureStream();
-		var subscriber = new Subscriber<Temperature>() {
 
-			private Subscription s;
-
-			@Override
-			public void onSubscribe(Subscription s) {
-				this.s = s;
-				s.request(1);
-			}
-
-			@Override
-			public void onNext(Temperature temperature) {
-				System.out.println(temperature);
-				s.request(1);
-			}
-
-			@Override
-			public void onError(Throwable throwable) {
-
-			}
-
-			@Override
-			public void onComplete() {
-				countDownLatch.countDown();
-			}
-		};
-		stream.subscribe(subscriber);
-		stream.blockLast();
+		StepVerifier.create(temperatureSensor.temperatureStream().log())
+				.expectSubscription()
+				.expectNextCount(20)
+				.expectComplete()
+				.verify();
 	}
 
 }

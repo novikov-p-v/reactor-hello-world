@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-@Document(collection = "book") // (1)
+@Document(collection = "book")// (1)
 public class Book {
     @Id // (2)
     private ObjectId id; // (3)
